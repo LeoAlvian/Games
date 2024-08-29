@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -6,6 +6,21 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/wizard',
+    name: 'Wizard',
+    component: () => import('../views/WizardView.vue')
+  },
+  {
+    path: '/fivecrowns',
+    name: 'FiveCrowns',
+    component: () => import('../views/FiveCrowns.vue')
+  },
+  {
+    path: '/golf',
+    name: 'Golf',
+    component: () => import('../views/GolfView.vue')
   },
   {
     path: '/about',
@@ -18,7 +33,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 

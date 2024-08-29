@@ -1,0 +1,9 @@
+:root {
+    --sidebar-bg-color: #2f855a;
+    --sidebar-item-hover: #38a169;
+    --sidebar-item-active: #114e33;
+
+    margin: 0;
+    padding: 0;
+    box-sizing: border-boxs;
+}

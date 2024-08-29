@@ -1,18 +1,40 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <input type="text" v-model="stateValue">
+    <button @click="saveToLocalStorage()">Save text</button>
+    <div class="">{{  state }}</div>
+
+    <div class="clear">
+      <button @click="clearLocal()">Clear local storage</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import { defineComponent, ref } from 'vue';
+
 
 export default defineComponent({
   name: 'HomeView',
   components: {
-    HelloWorld,
+    
+  },
+  setup() {
+    const stateValue = ref('')
+    const state = ref(localStorage.getItem('name'))
+
+    const saveToLocalStorage = () => {
+      window.localStorage.setItem('name', stateValue.value)
+      console.log(localStorage.getItem('name'));
+      
+      state.value = stateValue.value
+    }
+
+    const clearLocal = () => {
+      window.localStorage.clear()
+    }
+
+    return { state, stateValue, saveToLocalStorage, clearLocal }
   },
 });
 </script>
