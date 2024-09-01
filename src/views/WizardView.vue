@@ -4,19 +4,19 @@
 
     <div v-if="!isPlayerSet" class="container-input-player">
       <h5>How many player</h5>
-      <input type="text" v-model="playerAmount">
+      <input type="number" required v-model="playerAmount">
       <button class="botton" @click="inputPlayer()">Set</button>
       <button class="botton" @click="setPlayer()">Play</button>
       <h5>{{ warning }}</h5>
       <h5>{{ players }}</h5>
       <h5>{{ playerAmount }}</h5>
       <div class="" v-for="(p, i) in players" :key="i">
-        <input class="container-input" type="text" v-model="players[i]">
+        <input type="text" class="container-input" v-model="players[i]">
       </div>
     </div>
     <div v-else class="wizard-container">
       <div class="box">
-        <h5>{{ playersDataTemp }}</h5>
+        <!-- <h5>{{ playersDataTemp }}</h5> -->
         <div class="gridTable">
             <h5>Name</h5>
             <h5>Bet</h5>
@@ -31,6 +31,7 @@
             <p for="Score" class="forth-column">{{ p.score }}</p>
           </div>
         </div>
+        <button @click="setBet()">Set Bet</button>
         <button @click="calculateScore()">Submit</button>
       </div>
     </div>
@@ -48,13 +49,16 @@ export default {
   },
   setup () {
 
-    const isPlayerSet = ref(false)
+    const isPlayerSet = ref(localStorage.getItem('isPlayerSet') ? JSON.parse(localStorage.getItem('isPlayerSet')) : false)
+    const isBetSet = ref(true)
+    const isGetSet = ref(false)
+
     const playerAmount = ref(0)
     const warning = ref('')
     const players = ref([])
     const round = ref(0)
-    const playersDataTemp = ref([])
-    const playersData = ref([])
+    const playersDataTemp = ref( localStorage.getItem('tempPlayer') ? JSON.parse(localStorage.getItem('tempPlayer')) : [] )
+    const playersData = ref(localStorage.getItem('players') ? JSON.parse(localStorage.getItem('players')) : [])
     // const playersData = ref(
     //   [ { "Name": "Leo", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Cray", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Tanya", "Set": 0, "Get": 0, "Score": 0 } ]
     // )
@@ -69,6 +73,9 @@ export default {
         playersData.value.push({ name: players.value[i], set: [], get: [], score: []})
       }
       isPlayerSet.value = !isPlayerSet.value;
+      localStorage.setItem('isPlayerSet', JSON.stringify(isPlayerSet.value))
+      localStorage.setItem('players', JSON.stringify(playersData.value))
+      localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
     }
 
     const inputPlayer = () => {
@@ -82,7 +89,7 @@ export default {
     }
 
     const calculateScore = () => {
-      console.log(localStorage.getItem('players') ? "Yes" : "No" )
+      console.log( localStorage.getItem('players') ? "Yes" : "No" )
       for (let i=0; i<playersDataTemp.value.length; i++) {
         if (playersDataTemp.value[i].set === playersDataTemp.value[i].get) {
           console.log('Inside right score')
@@ -104,16 +111,36 @@ export default {
         }
       }
       window.localStorage.setItem('players', JSON.stringify(playersData.value))
+      window.localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
+
       console.log('localVariable', JSON.parse(localStorage.getItem('players')))
       round.value += 1
       console.log('player data', playersData.value)
     }
 
-    const clearLocal = () => {
-      window.localStorage.removeItem('players')
+    const setBet = () => {
+      for (let player of playersDataTemp.value) {
+        player.get = player.set
+        localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
+        isBetSet.value = !isBetSet.value
+        isGetSet.value = !isGetSet.value
+      }
     }
 
-    return { isPlayerSet, playerAmount, warning, players, playersDataTemp, playersData, setPlayer, inputPlayer, calculateScore, clearLocal }
+    const clearLocal = () => {
+      window.localStorage.removeItem('players')
+      window.localStorage.removeItem('tempPlayer')
+
+      isPlayerSet.value = !isPlayerSet.value;
+      localStorage.removeItem('isPlayerSet')
+
+      players.value = []
+      playersData.value = []
+      playersDataTemp.value = []
+      playerAmount.value = 0
+    }
+
+    return { isPlayerSet,isBetSet, playerAmount, warning, players, playersDataTemp, playersData, setPlayer, inputPlayer, calculateScore, clearLocal, setBet }
   }
 
 }
