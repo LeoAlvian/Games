@@ -34,6 +34,32 @@
         <button @click="setBet()">Set Bet</button>
         <button @click="calculateScore()">Submit</button>
       </div>
+      <div class="cards">
+        <div class="card">
+          <div class="element title-table"><h5 class="table-content1">Name</h5></div>
+          <div class="element title-table"><h5 class="table-content">Bet</h5></div>
+          <div class="element title-table"><h5 class="table-content">Get</h5></div>
+          <div class="element title-table"><h5 class="table-content">Score</h5></div>
+        </div>
+        <div class="card">
+          <div class="element"><p class="table-content1">Leo</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
+          <div class="element"><p class="table-content">2</p></div>
+          <div class="element"><p class="table-content">2</p></div>
+          <div class="element score"><p class="table-content">40</p></div>
+        </div>
+        <div class="card">
+          <div class="element"><p class="table-content1">Cray</p></div>
+          <div class="element"><p class="table-content">2</p></div>
+          <div class="element"><p class="table-content">2</p></div>
+          <div class="element score"><p class="table-content">4000</p></div>
+        </div>
+        <div class="card">
+          <div class="element"><p class="table-content1">Kelly</p><span class="loser"><i class="fa-solid fa-ghost"></i></span></div>
+          <div class="element"><p class="table-content">2</p></div>
+          <div class="element"><p class="table-content">2</p></div>
+          <div class="element last score"><p class="table-content">400</p></div>
+        </div>
+    </div>
     </div>
     <button @click="clearLocal()">End Game</button>
   </div>
@@ -153,8 +179,8 @@ export default {
 }
 
 h5 {
-  margin: .3rem 0;
-  color: var(--sidebar-item-active)
+  /* margin: .3rem 0; */
+  /* color: var(--sidebar-item-active) */
 }
 
 p {
@@ -162,10 +188,10 @@ p {
   color: var(--sidebar-item-active)
 }
 
-.wizard-container {
+/* .wizard-container {
   display: flex;
   justify-content: center;
-}
+} */
 
 .box {
   width: 90%;
@@ -210,4 +236,62 @@ p {
 .betGetInput:focus {
   /* outline-color: yellow; */
 }
+
+
+/* New card style  */
+.card {
+  /* background-color: rgb(205, 221, 221); */
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+
+}
+
+.element {
+  position: relative;
+  background-color: #dfeeee;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  color: black;
+}
+
+.winner {
+  position: absolute;
+  right: 7px;
+  font-size: 13px;
+  color: #be9200;
+  /* color: var(--sidebar-item-active); */
+}
+
+.loser {
+  position: absolute;
+  right: 7px;
+  font-size: 13px;
+  color: #b30000;
+  /* color: var(--sidebar-item-active); */
+}
+
+.title-table {
+  background-color: var(--sidebar-bg-color); 
+  color: white;
+}
+
+.table-content1 {
+  min-width: 9rem;
+  text-align: start;
+  font-weight: 700;
+  padding-left: 10px;
+}
+
+.table-content {
+  min-width: 4rem;
+}
+
+.score {
+  font-weight: 700;
+  /* background-color: rgb(45, 231, 129); */
+}
+
 </style>
