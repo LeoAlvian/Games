@@ -4,17 +4,17 @@
 
     <div class="cards">
       <div class="card">
-        <div class="element title-table"><h5 class="table-content1">Name</h5></div>
-        <div class="element title-table"><h5 class="table-content">Bet</h5></div>
-        <div class="element title-table"><h5 class="table-content">Get</h5></div>
-        <div class="element title-table"><h5 class="table-content">Score</h5></div>
+        <div class="element item1 title-table"><h5 class="table-content1">Name</h5></div>
+        <div class="element item2 title-table"><h5 class="table-content">Bet</h5></div>
+        <div class="element item2 title-table"><h5 class="table-content">Get</h5></div>
+        <div class="element item2 title-table"><h5 class="table-content">Score</h5></div>
       </div>
       <div class="card">
-        <div class="element"><p class="table-content1">Leo</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
-        <div class="element" v-if="betState"><p class="table-content">2</p></div>
-        <div class="element" v-else><input type="number" class="input-score"></div>
-        <div class="element"><p class="table-content">2</p></div>
-        <div class="element score"><p class="table-content">4000</p></div>
+        <div class="element item1 "><p class="table-content1">Leo</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
+        <div class="element item2" v-if="betState"><p class="table-content">2</p></div>
+        <div class="element item2" v-else><input type="number" class="input-score"></div>
+        <div class="element item2"><p class="table-content">2</p></div>
+        <div class="element item2 score"><p class="table-content">4000</p></div>
       </div>
       <div class="card">
         <div class="element"><p class="table-content1">Cray<span class="loser"><i class="fa-solid fa-ghost"></i></span></p></div>
@@ -30,7 +30,7 @@
         <div class="element last score"><p class="table-content">400</p></div>
       </div> -->
     </div>
-    <button @click="setBet()">Set Bet</button>
+    <button class="btn" @click="setBet()">Set Bet</button>
   </div>
 </template>
 
@@ -56,14 +56,28 @@ export default {
 }
 </script>
 
-<style>
+<style scoped> 
 
 h5 {
   margin: 0;
 }
 
+.btn {
+  background-color: var(--sidebar-bg-color);
+  color: white;
+  border: 1px solid var(--sidebar-bg-color);
+  padding: 5px 15px;
+  border-radius: 5px;
+}
+
+.btn:hover {
+  border: 1px solid var(--sidebar-bg-color);
+  background-color: white;
+  color: var(--sidebar-bg-color);
+}
+
 .cards {
-  /* background-color: rgb(206, 214, 204); */
+  background-color: #940101;
 }
 
 .card {
@@ -84,6 +98,16 @@ h5 {
   align-items: center;
   border-radius: 5px;
   color: black;
+  /* min-width: 9rem; */
+}
+
+.item1 {
+  flex-grow: 20;
+  justify-content: start;
+}
+
+.item2 {
+  flex-grow: 1;
 }
 
 .winner {
@@ -108,7 +132,7 @@ h5 {
 }
 
 .table-content1 {
-  min-width: 9rem;
+  
   text-align: start;
   font-weight: 700;
   padding-left: 10px;
@@ -130,7 +154,7 @@ h5 {
 .input-score {
   margin: 0;
   padding: 0;
-  width: 60%;
+  width: 3.73rem;
 }
 
 </style>

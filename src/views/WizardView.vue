@@ -15,58 +15,43 @@
       </div>
     </div>
     <div v-else class="wizard-container">
-      <div class="box">
-        <!-- <h5>{{ playersDataTemp }}</h5> -->
-        <div class="gridTable">
-            <h5>Name</h5>
-            <h5>Bet</h5>
-            <h5>Get</h5>
-            <h5>Score</h5>
-        </div>
-        <div class="" v-for="(p, i) in playersDataTemp" :key="i">
-          <div class="gridTable">
-            <p for="Name" class="first-column">{{ p.name }}</p>
-            <input class="betGetInput second-column" type="number" v-model="p.set">
-            <input class="betGetInput third-column" type="number" v-model="p.get">
-            <p for="Score" class="forth-column">{{ p.score }}</p>
-          </div>
-        </div>
-        <button @click="setBet()">Set Bet</button>
-        <button @click="calculateScore()">Submit</button>
-      </div>
       <div class="cards">
         <div class="card">
-          <div class="element title-table"><h5 class="table-content1">Name</h5></div>
-          <div class="element title-table"><h5 class="table-content">Bet</h5></div>
-          <div class="element title-table"><h5 class="table-content">Get</h5></div>
-          <div class="element title-table"><h5 class="table-content">Score</h5></div>
+          <div class="element item1 title-table"><h5 class="table-content1">Name</h5></div>
+          <div class="element item2 title-table"><h5 class="table-content">Bet</h5></div>
+          <div class="element item2 title-table"><h5 class="table-content">Get</h5></div>
+          <div class="element item2 title-table"><h5 class="table-content">Score</h5></div>
         </div>
-        <div class="card">
-          <div class="element"><p class="table-content1">Leo</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
-          <div class="element"><p class="table-content">2</p></div>
-          <div class="element"><p class="table-content">2</p></div>
-          <div class="element score"><p class="table-content">40</p></div>
+      </div>
+      <transition-group name="list" tag="div" class="cards">
+        <div class="card" v-for="(p, i) in orderedScore" :key="i">
+          <!-- Name  -->
+          <div class="element item1"><p class="table-content1">{{ p.name }}</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
+          <!-- Bet  -->
+          <div class="element item2" v-if="isBetSet"><input type="number" class="input-score" v-model="p.set">
+            <!-- <div class="arrow-container">
+              <i class="fa-solid fa-angle-up arrow"></i><i class="fa-solid fa-angle-down arrow"></i>
+            </div> -->
+          </div>
+          <div class="element item2" v-else><p class="table-content">{{ p.set }}</p></div>
+          <!-- Get  -->
+          <div class="element item2" v-if="isGetSet"><input type="number" class="input-score" v-model="p.get"></div>
+          <div class="element item2" v-else><p class="table-content">{{ p.get }}</p></div>
+          <!-- Score  -->
+          <div class="element item2 score"><p class="table-content">{{ p.score }}</p></div>
         </div>
-        <div class="card">
-          <div class="element"><p class="table-content1">Cray</p></div>
-          <div class="element"><p class="table-content">2</p></div>
-          <div class="element"><p class="table-content">2</p></div>
-          <div class="element score"><p class="table-content">4000</p></div>
-        </div>
-        <div class="card">
-          <div class="element"><p class="table-content1">Kelly</p><span class="loser"><i class="fa-solid fa-ghost"></i></span></div>
-          <div class="element"><p class="table-content">2</p></div>
-          <div class="element"><p class="table-content">2</p></div>
-          <div class="element last score"><p class="table-content">400</p></div>
-        </div>
+      </transition-group>
     </div>
+    <div class="submit-container">
+      <button class="btn" @click="setBet()">Set Bet</button>
+      <button class="btn" @click="calculateScore()">Submit</button>
     </div>
-    <button @click="clearLocal()">End Game</button>
+    <button class="btn" @click="clearLocal()">End Game</button>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 export default {
   name: 'WizardView',
@@ -88,6 +73,7 @@ export default {
     // const playersData = ref(
     //   [ { "Name": "Leo", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Cray", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Tanya", "Set": 0, "Get": 0, "Score": 0 } ]
     // )
+
 
     const setPlayer = () => {
       if (playerAmount.value === 0) {
@@ -138,19 +124,27 @@ export default {
       }
       window.localStorage.setItem('players', JSON.stringify(playersData.value))
       window.localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
+      isBetSet.value = !isBetSet.value
+      isGetSet.value = !isGetSet.value
 
       console.log('localVariable', JSON.parse(localStorage.getItem('players')))
       round.value += 1
       console.log('player data', playersData.value)
     }
 
+    const orderedScore = computed(() => {
+      return [...playersDataTemp.value].sort((a, b) => {
+        return a.score < b.score ? 1 : -1
+      })
+    })
+
     const setBet = () => {
       for (let player of playersDataTemp.value) {
         player.get = player.set
         localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
-        isBetSet.value = !isBetSet.value
-        isGetSet.value = !isGetSet.value
       }
+      isBetSet.value = !isBetSet.value
+      isGetSet.value = !isGetSet.value
     }
 
     const clearLocal = () => {
@@ -166,7 +160,7 @@ export default {
       playerAmount.value = 0
     }
 
-    return { isPlayerSet,isBetSet, playerAmount, warning, players, playersDataTemp, playersData, setPlayer, inputPlayer, calculateScore, clearLocal, setBet }
+    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, setPlayer, inputPlayer, calculateScore, clearLocal, setBet }
   }
 
 }
@@ -185,13 +179,23 @@ h5 {
 
 p {
   margin: 0;
-  color: var(--sidebar-item-active)
+  /* color: var(--sidebar-item-active) */
 }
 
-/* .wizard-container {
-  display: flex;
-  justify-content: center;
-} */
+.btn {
+  background-color: var(--sidebar-bg-color);
+  color: white;
+  border: 1px solid var(--sidebar-bg-color);
+  padding: 5px 15px;
+  border-radius: 5px;
+  margin: 0 2px;
+}
+
+.btn:hover {
+  border: 1px solid var(--sidebar-bg-color);
+  background-color: white;
+  color: var(--sidebar-bg-color);
+}
 
 .box {
   width: 90%;
@@ -225,13 +229,13 @@ p {
 
 
 
-.betGetInput {
+/* .betGetInput {
   width: 2rem;
   border: 2px solid var(--sidebar-bg-color);
   color: var(--sidebar-item-active);
   border-radius: 5px;
   font-weight: bold;
-}
+} */
 
 .betGetInput:focus {
   /* outline-color: yellow; */
@@ -242,6 +246,7 @@ p {
 .card {
   /* background-color: rgb(205, 221, 221); */
   display: flex;
+  gap: 1px;
   justify-content: space-between;
   margin-bottom: 0.3rem;
 
@@ -252,9 +257,20 @@ p {
   background-color: #dfeeee;
   height: 2rem;
   display: flex;
+  justify-content: center;
   align-items: center;
   border-radius: 5px;
   color: black;
+  /* min-width: 9rem; */
+}
+
+.item1 {
+  flex-grow: 20;
+  justify-content: start;
+}
+
+.item2 {
+  flex-grow: 1;
 }
 
 .winner {
@@ -279,7 +295,7 @@ p {
 }
 
 .table-content1 {
-  min-width: 9rem;
+  
   text-align: start;
   font-weight: 700;
   padding-left: 10px;
@@ -292,6 +308,40 @@ p {
 .score {
   font-weight: 700;
   /* background-color: rgb(45, 231, 129); */
+}
+
+.first {
+  color: #be9200;
+}
+
+.input-score {
+  margin: 0;
+  padding: 0;
+  width: 3.73rem;
+  border: 1px solid var(--sidebar-bg-color);
+  border-radius: 2px;
+  height: 20px;
+  text-align: center;
+}
+
+/* .arrow-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0.2rem;
+}
+
+.arrow {
+  cursor: pointer
+} */
+
+.submit-container {
+  display: flex;
+  justify-content: center;
+  margin: 0.8rem 0;
+}
+
+.list-move {
+  transition: all 1s;
 }
 
 </style>
