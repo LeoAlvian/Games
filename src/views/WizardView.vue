@@ -24,9 +24,12 @@
         </div>
       </div>
       <transition-group name="list" tag="div" class="cards">
-        <div class="card" v-for="(p, i) in orderedScore" :key="i">
+        <div class="card" v-for="(p, i) in orderedScore" :key="p.name">
           <!-- Name  -->
-          <div class="element item1"><p class="table-content1">{{ p.name }}</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
+          <div class="element item1"><p class="table-content1">{{ i + 1 }}. {{ p.name }}</p>
+            <span v-if="p.score === orderedScore[0].score" class="winner"><i class="fa-solid fa-crown"></i></span>
+            <span v-if="p.score === orderedScore[orderedScore.length - 1].score" class="loser"><i class="fa-solid fa-ghost"></i></span>
+          </div>
           <!-- Bet  -->
           <div class="element item2" v-if="isBetSet"><input type="number" class="input-score" v-model="p.set">
             <!-- <div class="arrow-container">
@@ -340,8 +343,20 @@ p {
   margin: 0.8rem 0;
 }
 
-.list-move {
-  transition: all 1s;
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.list-leave-active {
+  position: absolute;
 }
 
 </style>

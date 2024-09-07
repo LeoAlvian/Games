@@ -2,12 +2,19 @@
   <div class="hero-golf">
     Golf
 
-    <div class="cards">
+    <transition-group name="list" tag="div" class="cards">
       <div class="card">
         <div class="element item1 title-table"><h5 class="table-content1">Name</h5></div>
         <div class="element item2 title-table"><h5 class="table-content">Bet</h5></div>
         <div class="element item2 title-table"><h5 class="table-content">Get</h5></div>
         <div class="element item2 title-table"><h5 class="table-content">Score</h5></div>
+      </div>
+      <div class="card">
+        <div class="element item1"><p class="table-content1">Cray<span class="loser"><i class="fa-solid fa-ghost"></i></span></p></div>
+        <div class="element item2" v-if="betState"><p class="table-content">2</p></div>
+        <div class="element item2" v-else><input type="number" class="input-score"></div>
+        <div class="element item2"><p class="table-content">2</p></div>
+        <div class="element item2 score"><p class="table-content">-40</p></div>
       </div>
       <div class="card">
         <div class="element item1 "><p class="table-content1">Leo</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
@@ -16,20 +23,14 @@
         <div class="element item2"><p class="table-content">2</p></div>
         <div class="element item2 score"><p class="table-content">4000</p></div>
       </div>
-      <div class="card">
-        <div class="element"><p class="table-content1">Cray<span class="loser"><i class="fa-solid fa-ghost"></i></span></p></div>
-        <div class="element" v-if="betState"><p class="table-content">2</p></div>
-        <div class="element" v-else><input type="number" class="input-score"></div>
-        <div class="element"><p class="table-content">2</p></div>
-        <div class="element score"><p class="table-content">-40</p></div>
-      </div>
+      
       <!-- <div class="card">
         <div class="element"><p class="table-content1">Kelly</p><span class="loser"><i class="fa-solid fa-ghost"></i></span></div>
         <div class="element"><p class="table-content">2</p></div>
         <div class="element"><p class="table-content">2</p></div>
         <div class="element last score"><p class="table-content">400</p></div>
       </div> -->
-    </div>
+    </transition-group>
     <button class="btn" @click="setBet()">Set Bet</button>
   </div>
 </template>
@@ -155,6 +156,10 @@ h5 {
   margin: 0;
   padding: 0;
   width: 3.73rem;
+}
+
+.list-move {
+  transition: all 1s;
 }
 
 </style>
