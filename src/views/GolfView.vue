@@ -1,8 +1,8 @@
 <template>
   <div class="hero-golf">
     Golf
-
-    <transition-group name="list" tag="div" class="cards">
+    <img src="../assets/404.png" alt="" class="img">
+    <!-- <transition-group name="list" tag="div" class="cards">
       <div class="card">
         <div class="element item1 title-table"><h5 class="table-content1">Name</h5></div>
         <div class="element item2 title-table"><h5 class="table-content">Bet</h5></div>
@@ -16,22 +16,8 @@
         <div class="element item2"><p class="table-content">2</p></div>
         <div class="element item2 score"><p class="table-content">-40</p></div>
       </div>
-      <div class="card">
-        <div class="element item1 "><p class="table-content1">Leo</p><span class="winner"><i class="fa-solid fa-crown"></i></span></div>
-        <div class="element item2" v-if="betState"><p class="table-content">2</p></div>
-        <div class="element item2" v-else><input type="number" class="input-score"></div>
-        <div class="element item2"><p class="table-content">2</p></div>
-        <div class="element item2 score"><p class="table-content">4000</p></div>
-      </div>
-      
-      <!-- <div class="card">
-        <div class="element"><p class="table-content1">Kelly</p><span class="loser"><i class="fa-solid fa-ghost"></i></span></div>
-        <div class="element"><p class="table-content">2</p></div>
-        <div class="element"><p class="table-content">2</p></div>
-        <div class="element last score"><p class="table-content">400</p></div>
-      </div> -->
-    </transition-group>
-    <button class="btn" @click="setBet()">Set Bet</button>
+    </transition-group> -->
+    <!-- <button class="btn" @click="setBet()">Set Bet</button> -->
   </div>
 </template>
 
@@ -61,6 +47,13 @@ export default {
 
 h5 {
   margin: 0;
+}
+
+.img {
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
 }
 
 .btn {

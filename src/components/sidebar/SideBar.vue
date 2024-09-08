@@ -21,7 +21,7 @@
         <SidebarLink to="/wizard" icon="fas fa-hat-wizard">Wizard</SidebarLink>
         <SidebarLink to="/fivecrowns" icon="fas fa-chess-queen">5 Crowns</SidebarLink>
         <SidebarLink to="/golf" icon="fas fa-diamond">Golf</SidebarLink>
-        <SidebarLink to="/friends" icon="fas fa-users">Friends</SidebarLink>
+        <!-- <SidebarLink to="/friends" icon="fas fa-users">Friends</SidebarLink> -->
 
         <span 
         class="collapse-icon"

@@ -1,12 +1,14 @@
 <template>
   <div class="home">
-    <input type="text" v-model="stateValue">
+    Home and Chart
+    <img src="../assets/404.png" alt="" class="img">
+    <!-- <input type="text" v-model="stateValue">
     <button @click="saveToLocalStorage()">Save text</button>
     <div class="">{{  state }}</div>
 
     <div class="clear">
       <button @click="clearLocal()">Clear local storage</button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -38,3 +40,16 @@ export default defineComponent({
   },
 });
 </script>
+
+
+<style scoped>
+
+
+.img {
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+}
+
+</style>
