@@ -4,12 +4,14 @@
 
     <div v-if="!isPlayerSet" class="container-input-player">
       <h5>How many player</h5>
-      <input type="number" required v-model="playerAmount">
-      <button class="botton" @click="inputPlayer()">Set</button>
-      <button class="botton" @click="setPlayer()">Play</button>
-      <h5>{{ warning }}</h5>
+      <div class="player-set">
+        <input type="number" required v-model="playerAmount">
+        <button class="btn" @click="inputPlayer()">Set</button>
+      </div>
+      <button class="btn play" @click="setPlayer()">Play</button>
+      <!-- <h5>{{ warning }}</h5>
       <h5>{{ players }}</h5>
-      <h5>{{ playerAmount }}</h5>
+      <h5>{{ playerAmount }}</h5> -->
       <div class="" v-for="(p, i) in players" :key="i">
         <input type="text" class="container-input" v-model="players[i]">
       </div>
@@ -44,12 +46,14 @@
           <div class="element item2 score"><p class="table-content">{{ p.score }}</p></div>
         </div>
       </transition-group>
+      <div class="bottom-btn">
+        <div class="submit-container">
+          <button class="btn" @click="setBet()">Set Bet</button>
+          <button class="btn" @click="calculateScore()">Submit</button>
+        </div>
+        <button class="btn" @click="clearLocal()">End Game</button>
+      </div>
     </div>
-    <div class="submit-container">
-      <button class="btn" @click="setBet()">Set Bet</button>
-      <button class="btn" @click="calculateScore()">Submit</button>
-    </div>
-    <button class="btn" @click="clearLocal()">End Game</button>
   </div>
 </template>
 
@@ -198,6 +202,10 @@ p {
   border: 1px solid var(--sidebar-bg-color);
   background-color: white;
   color: var(--sidebar-bg-color);
+}
+
+.play {
+  margin-top: 1rem;
 }
 
 .box {
