@@ -5,16 +5,16 @@
     <div v-if="!isPlayerSet" class="container-input-player">
       <h5>How many player</h5>
       <div class="player-set">
-        <input type="number" required v-model="playerAmount">
-        <button class="btn" @click="inputPlayer()">Set</button>
+        <input type="number" class="input-player" required v-model="playerAmount">
+        <button class="btn" @click="inputPlayer()">Set Player</button>
       </div>
-      <button class="btn play" @click="setPlayer()">Play</button>
       <!-- <h5>{{ warning }}</h5>
       <h5>{{ players }}</h5>
       <h5>{{ playerAmount }}</h5> -->
       <div class="" v-for="(p, i) in players" :key="i">
         <input type="text" class="container-input" v-model="players[i]">
       </div>
+      <button class="btn play" @click="setPlayer()">Play</button>
     </div>
     <div v-else class="wizard-container">
       <div class="cards">
@@ -29,8 +29,10 @@
         <div class="card" v-for="(p, i) in orderedScore" :key="p.name">
           <!-- Name  -->
           <div class="element item1"><p class="table-content1">{{ i + 1 }}. {{ p.name }}</p>
-            <span v-if="p.score === orderedScore[0].score" class="winner"><i class="fa-solid fa-crown"></i></span>
-            <span v-if="p.score === orderedScore[orderedScore.length - 1].score" class="loser"><i class="fa-solid fa-ghost"></i></span>
+            <div class="" v-if="p.score > 0">
+              <span v-if="p.score === orderedScore[0].score" class="winner"><i class="fa-solid fa-crown"></i></span>
+              <span v-if="p.score === orderedScore[orderedScore.length - 1].score" class="loser"><i class="fa-solid fa-ghost"></i></span>
+            </div>
           </div>
           <!-- Bet  -->
           <div class="element item2" v-if="isBetSet"><input type="number" class="input-score" v-model="p.set">
@@ -53,17 +55,22 @@
         </div>
         <button class="btn" @click="clearLocal()">End Game</button>
       </div>
+      <button @click="togglePopup()">Open Popup</button>
     </div>
+    <PopupView v-if="buttonPopupTrigger" :togglePopup="() => togglePopup()">
+      <h1>Bet</h1>
+    </PopupView>
   </div>
 </template>
 
 <script>
 import { computed, ref } from 'vue';
+import PopupView from '@/components/PopupView.vue';
 
 export default {
   name: 'WizardView',
   components : {
-
+    PopupView,
   },
   setup () {
 
@@ -77,9 +84,14 @@ export default {
     const round = ref(0)
     const playersDataTemp = ref( localStorage.getItem('tempPlayer') ? JSON.parse(localStorage.getItem('tempPlayer')) : [] )
     const playersData = ref(localStorage.getItem('players') ? JSON.parse(localStorage.getItem('players')) : [])
+    const buttonPopupTrigger = ref(false)
     // const playersData = ref(
     //   [ { "Name": "Leo", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Cray", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Tanya", "Set": 0, "Get": 0, "Score": 0 } ]
     // )
+
+    const togglePopup = () => {
+      buttonPopupTrigger.value = !buttonPopupTrigger.value
+    }
 
 
     const setPlayer = () => {
@@ -167,7 +179,7 @@ export default {
       playerAmount.value = 0
     }
 
-    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, setPlayer, inputPlayer, calculateScore, clearLocal, setBet }
+    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, buttonPopupTrigger, setPlayer, inputPlayer, calculateScore, clearLocal, setBet, togglePopup }
   }
 
 }
@@ -176,7 +188,13 @@ export default {
 <style scoped>
 
 .container-input {
-  margin: .2rem;
+  margin: .2rem 0;
+  padding: 0;
+  border: 1px solid var(--sidebar-bg-color);
+  border-radius: 2px;
+  height: 20px;
+  font-size: 16px;
+  text-align: center;
 }
 
 h5 {
@@ -332,6 +350,17 @@ p {
   border: 1px solid var(--sidebar-bg-color);
   border-radius: 2px;
   height: 20px;
+  text-align: center;
+}
+
+.input-player {
+  margin: 0 0.1rem;
+  padding: 0.12rem 0;
+  width: 6rem;
+  border: 1px solid var(--sidebar-bg-color);
+  border-radius: 2px;
+  height: 20px;
+  font-size: 16px;
   text-align: center;
 }
 
