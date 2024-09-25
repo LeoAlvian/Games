@@ -1,6 +1,6 @@
 <template>
   <div class="hero">
-    Wizard
+    <h2>Wizard</h2> 
 
     <div v-if="!isPlayerSet" class="container-input-player">
       <h5>How many player</h5>
@@ -17,6 +17,8 @@
       <button class="btn play" @click="setPlayer()">Play</button>
     </div>
     <div v-else class="wizard-container">
+      <h4>Round : {{ round }}</h4>
+      <h4>Bet : {{ betTotal }}</h4>
       <div class="cards">
         <div class="card">
           <div class="element item1 title-table"><h5 class="table-content1">Name</h5></div>
@@ -35,14 +37,14 @@
             </div>
           </div>
           <!-- Bet  -->
-          <div class="element item2" v-if="isBetSet"><input type="number" class="input-score" v-model="p.set">
-            <!-- <div class="arrow-container">
-              <i class="fa-solid fa-angle-up arrow"></i><i class="fa-solid fa-angle-down arrow"></i>
-            </div> -->
-          </div>
-          <div class="element item2" v-else><p class="table-content">{{ p.set }}</p></div>
+          <!-- <div class="element item2" v-if="isBetSet">
+            <input type="number" class="input-score" v-model="p.set">
+          </div> -->
+          <div class="element item2"><p class="table-content">{{ p.set }}</p></div>
           <!-- Get  -->
-          <div class="element item2" v-if="isGetSet"><input type="number" class="input-score" v-model="p.get"></div>
+          <div class="element item2" v-if="isGetSet">
+            <input type="number" class="input-score" v-model="p.get">
+          </div>
           <div class="element item2" v-else><p class="table-content">{{ p.get }}</p></div>
           <!-- Score  -->
           <div class="element item2 score"><p class="table-content">{{ p.score }}</p></div>
@@ -50,15 +52,57 @@
       </transition-group>
       <div class="bottom-btn">
         <div class="submit-container">
-          <button class="btn" @click="setBet()">Set Bet</button>
-          <button class="btn" @click="calculateScore()">Submit</button>
+          <button class="btn" @click="togglePopup(), calculateBet()">Set Bet</button>
+          <button class="btn" @click="togglePopup()">Submit</button>
         </div>
         <button class="btn" @click="clearLocal()">End Game</button>
       </div>
-      <button @click="togglePopup()">Open Popup</button>
+      <!-- <button class="btn" @click="togglePopup()">Open Popup</button> -->
     </div>
-    <PopupView v-if="buttonPopupTrigger" :togglePopup="() => togglePopup()">
-      <h1>Bet</h1>
+
+    <!-- Popup  -->
+    <PopupView v-if="buttonPopupTrigger" :togglePopup="() => togglePopup()" :setBet="() => setBet()">
+      <div class="" v-if="!isBetSet">
+        <h1>Bet</h1>
+        <div class="card" v-for="(p, i) in playersDataTemp" :key="p.name">
+          <!-- Name  -->
+          <div class="element item1 popup-name"><p class="table-content1">{{ i + 1 }}. {{ p.name }}</p>
+          </div>
+          <!-- Bet -->
+          <div class="element item2">
+            <div class="" v-if="p.set === 0">
+              <button class="muted"><i class="fa-solid fa-minus"></i></button>
+            </div>
+            <div class="" v-else>
+              <button @click="p.set --, betTotal --" class="add minus"><i class="fa-solid fa-minus"></i></button>
+            </div>
+            <input type="number" class="input-score" v-model="p.set">
+            <button @click="p.set ++, betTotal ++" class="add plus"><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+        <h4>Total Bet : {{ betTotal }}</h4>
+        <button class="btn" @click="setBet(), togglePopup()">Set Bet</button>
+      </div>
+      <div class="" v-else>
+        <h1>Get</h1>
+        <div class="card" v-for="(p, i) in playersDataTemp" :key="p.name">
+          <!-- Name  -->
+          <div class="element item1 popup-name"><p class="table-content1">{{ i + 1 }}. {{ p.name }}</p>
+          </div>
+          <!-- Bet -->
+          <div class="element item2">
+            <div class="" v-if="p.get === 0">
+              <button class="muted"><i class="fa-solid fa-minus"></i></button>
+            </div>
+            <div class="" v-else>
+              <button @click="p.get --" class="add minus"><i class="fa-solid fa-minus"></i></button>
+            </div>
+            <input type="number" class="input-score" v-model="p.get">
+            <button @click="p.get ++" class="add plus"><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+        <button class="btn" @click="calculateScore(), togglePopup()">Submit</button>
+      </div>
     </PopupView>
   </div>
 </template>
@@ -75,13 +119,14 @@ export default {
   setup () {
 
     const isPlayerSet = ref(localStorage.getItem('isPlayerSet') ? JSON.parse(localStorage.getItem('isPlayerSet')) : false)
-    const isBetSet = ref(true)
+    const isBetSet = ref(false)
     const isGetSet = ref(false)
 
     const playerAmount = ref(0)
     const warning = ref('')
     const players = ref([])
-    const round = ref(0)
+    const round = ref(1)
+    const betTotal = ref(0)
     const playersDataTemp = ref( localStorage.getItem('tempPlayer') ? JSON.parse(localStorage.getItem('tempPlayer')) : [] )
     const playersData = ref(localStorage.getItem('players') ? JSON.parse(localStorage.getItem('players')) : [])
     const buttonPopupTrigger = ref(false)
@@ -103,6 +148,7 @@ export default {
         playersDataTemp.value.push({ name: players.value[i], set: 0, get: 0, score: 0})
         playersData.value.push({ name: players.value[i], set: [], get: [], score: []})
       }
+      console.log('players', players)
       isPlayerSet.value = !isPlayerSet.value;
       localStorage.setItem('isPlayerSet', JSON.stringify(isPlayerSet.value))
       localStorage.setItem('players', JSON.stringify(playersData.value))
@@ -144,7 +190,7 @@ export default {
       window.localStorage.setItem('players', JSON.stringify(playersData.value))
       window.localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
       isBetSet.value = !isBetSet.value
-      isGetSet.value = !isGetSet.value
+      // isGetSet.value = !isGetSet.value
 
       console.log('localVariable', JSON.parse(localStorage.getItem('players')))
       round.value += 1
@@ -163,7 +209,14 @@ export default {
         localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
       }
       isBetSet.value = !isBetSet.value
-      isGetSet.value = !isGetSet.value
+      // isGetSet.value = !isGetSet.value
+    }
+
+    const calculateBet = () => {
+      betTotal.value = 0
+      for (let player of playersDataTemp.value) {
+        betTotal.value += player.set
+      }
     }
 
     const clearLocal = () => {
@@ -179,7 +232,7 @@ export default {
       playerAmount.value = 0
     }
 
-    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, buttonPopupTrigger, setPlayer, inputPlayer, calculateScore, clearLocal, setBet, togglePopup }
+    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, buttonPopupTrigger, round, betTotal, setPlayer, inputPlayer, calculateScore, clearLocal, setBet, togglePopup, calculateBet }
   }
 
 }
@@ -214,6 +267,7 @@ p {
   padding: 5px 15px;
   border-radius: 5px;
   margin: 0 2px;
+  cursor: pointer;
 }
 
 .btn:hover {
@@ -291,6 +345,10 @@ p {
   border-radius: 5px;
   color: black;
   /* min-width: 9rem; */
+}
+
+.popup-name {
+  padding-right: 4rem;
 }
 
 .item1 {
@@ -394,6 +452,32 @@ p {
 
 .list-leave-active {
   position: absolute;
+}
+
+.add {
+  padding: .2rem .3rem;
+  margin: 0 .2rem;
+  border-radius: 5px;
+  background-color: var(--sidebar-bg-color);
+  border: none;
+  cursor: pointer;
+}
+
+.plus {
+  color: white;
+}
+
+.minus {
+  color: var(--sidebar-item-active);
+}
+
+.muted {
+  padding: .2rem .3rem;
+  margin: 0 .2rem;
+  border-radius: 5px;
+  background-color: #686868;
+  color: #ffffff;
+  border: none;
 }
 
 </style>
