@@ -17,8 +17,10 @@
       <button class="btn play" @click="setPlayer()">Play</button>
     </div>
     <div v-else class="wizard-container">
-      <h4>Round : {{ round }}</h4>
-      <h4>Bet : {{ betTotal }}</h4>
+      <div class="info">
+        <h4>Round : {{ round }}</h4>
+        <h4>Total Bet : {{ betTotal }}</h4>
+      </div>
       <div class="cards">
         <div class="card">
           <div class="element item1 title-table"><h5 class="table-content1">Name</h5></div>
@@ -31,7 +33,7 @@
         <div class="card" v-for="(p, i) in orderedScore" :key="p.name">
           <!-- Name  -->
           <div class="element item1"><p class="table-content1">{{ i + 1 }}. {{ p.name }}</p>
-            <div class="" v-if="p.score > 0">
+            <div class="" v-if="round > 1">
               <span v-if="p.score === orderedScore[0].score" class="winner"><i class="fa-solid fa-crown"></i></span>
               <span v-if="p.score === orderedScore[orderedScore.length - 1].score" class="loser"><i class="fa-solid fa-ghost"></i></span>
             </div>
@@ -53,12 +55,19 @@
       <div class="bottom-btn">
         <div class="submit-container">
           <button class="btn" @click="togglePopup(), calculateBet()">Set Bet</button>
-          <button class="btn" @click="togglePopup()">Submit</button>
+          <button class="btn" @click="togglePopup(), copyBetToGet()">Submit</button>
         </div>
-        <button class="btn" @click="clearLocal()">End Game</button>
+        <button class="btn endgame" @click="toggleEndGame()">End Game</button>
       </div>
       <!-- <button class="btn" @click="togglePopup()">Open Popup</button> -->
     </div>
+
+    <!-- Popup EndGame  -->
+     <PopupView v-if="endGameTrigger" :toggleEndGame="() => toggleEndGame()">
+      <h2>Want to end the game?</h2>
+      <button class="btn endgame" @click="clearLocal()">End</button>
+      <button class="btn" @click="toggleEndGame()">Cancel</button>
+     </PopupView>
 
     <!-- Popup  -->
     <PopupView v-if="buttonPopupTrigger" :togglePopup="() => togglePopup()" :setBet="() => setBet()">
@@ -125,17 +134,22 @@ export default {
     const playerAmount = ref(0)
     const warning = ref('')
     const players = ref([])
-    const round = ref(1)
+    const round = ref(localStorage.getItem('round') ? JSON.parse(localStorage.getItem('round')) : 1)
     const betTotal = ref(0)
     const playersDataTemp = ref( localStorage.getItem('tempPlayer') ? JSON.parse(localStorage.getItem('tempPlayer')) : [] )
     const playersData = ref(localStorage.getItem('players') ? JSON.parse(localStorage.getItem('players')) : [])
     const buttonPopupTrigger = ref(false)
+    const endGameTrigger = ref(false)
     // const playersData = ref(
     //   [ { "Name": "Leo", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Cray", "Set": 0, "Get": 0, "Score": 0 }, { "Name": "Tanya", "Set": 0, "Get": 0, "Score": 0 } ]
     // )
 
     const togglePopup = () => {
       buttonPopupTrigger.value = !buttonPopupTrigger.value
+    }
+
+    const toggleEndGame = () => {
+      endGameTrigger.value = !endGameTrigger.value
     }
 
 
@@ -187,6 +201,7 @@ export default {
           
         }
       }
+
       window.localStorage.setItem('players', JSON.stringify(playersData.value))
       window.localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
       isBetSet.value = !isBetSet.value
@@ -194,6 +209,8 @@ export default {
 
       console.log('localVariable', JSON.parse(localStorage.getItem('players')))
       round.value += 1
+      window.localStorage.setItem('round', JSON.stringify(round.value))
+      betTotal.value = 0
       console.log('player data', playersData.value)
     }
 
@@ -204,16 +221,23 @@ export default {
     })
 
     const setBet = () => {
+      localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
+      isBetSet.value = !isBetSet.value
+    }
+
+    const copyBetToGet = () => {
       for (let player of playersDataTemp.value) {
         player.get = player.set
-        localStorage.setItem('tempPlayer', JSON.stringify(playersDataTemp.value))
       }
-      isBetSet.value = !isBetSet.value
-      // isGetSet.value = !isGetSet.value
     }
 
     const calculateBet = () => {
       betTotal.value = 0
+      isBetSet.value = false
+      for (let player of playersDataTemp.value) {
+        player.set = 0
+        player.get = 0
+      }
       for (let player of playersDataTemp.value) {
         betTotal.value += player.set
       }
@@ -222,6 +246,7 @@ export default {
     const clearLocal = () => {
       window.localStorage.removeItem('players')
       window.localStorage.removeItem('tempPlayer')
+      window.localStorage.removeItem('round')
 
       isPlayerSet.value = !isPlayerSet.value;
       localStorage.removeItem('isPlayerSet')
@@ -230,9 +255,11 @@ export default {
       playersData.value = []
       playersDataTemp.value = []
       playerAmount.value = 0
+      round.value = 1
+      endGameTrigger.value = !endGameTrigger.value
     }
 
-    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, buttonPopupTrigger, round, betTotal, setPlayer, inputPlayer, calculateScore, clearLocal, setBet, togglePopup, calculateBet }
+    return { isPlayerSet,isBetSet, isGetSet, playerAmount, warning, players, playersDataTemp, playersData, orderedScore, buttonPopupTrigger, endGameTrigger, round, betTotal, setPlayer, inputPlayer, calculateScore, clearLocal, setBet, togglePopup, calculateBet, toggleEndGame,copyBetToGet }
   }
 
 }
@@ -250,9 +277,8 @@ export default {
   text-align: center;
 }
 
-h5 {
-  /* margin: .3rem 0; */
-  /* color: var(--sidebar-item-active) */
+h2 {
+  color: var(--sidebar-item-active)
 }
 
 p {
@@ -268,6 +294,12 @@ p {
   border-radius: 5px;
   margin: 0 2px;
   cursor: pointer;
+}
+
+.endgame {
+  background-color: white;
+  border: 1px solid var(--sidebar-bg-color);
+  color: var(--sidebar-bg-color);
 }
 
 .btn:hover {
@@ -324,6 +356,19 @@ p {
   /* outline-color: yellow; */
 }
 
+.info {
+  display: flex;
+  justify-content: space-evenly;
+  border: 2px solid var(--sidebar-bg-color);
+  margin: 0.5rem 0;
+  border-radius: 5px;
+}
+
+.info > h4 {
+  margin: 0.8rem 0;
+  color: var(--sidebar-bg-color);
+}
+
 
 /* New card style  */
 .card {
@@ -343,7 +388,8 @@ p {
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  color: black;
+  /* color: black; */
+  color: var(--sidebar-item-active)
   /* min-width: 9rem; */
 }
 
@@ -363,6 +409,7 @@ p {
 .winner {
   position: absolute;
   right: 7px;
+  bottom: 7px;
   font-size: 13px;
   color: #be9200;
   /* color: var(--sidebar-item-active); */
@@ -371,6 +418,7 @@ p {
 .loser {
   position: absolute;
   right: 7px;
+  bottom: 7px;
   font-size: 13px;
   color: #b30000;
   /* color: var(--sidebar-item-active); */
@@ -382,7 +430,6 @@ p {
 }
 
 .table-content1 {
-  
   text-align: start;
   font-weight: 700;
   padding-left: 10px;
@@ -468,7 +515,7 @@ p {
 }
 
 .minus {
-  color: var(--sidebar-item-active);
+  color: white;
 }
 
 .muted {

@@ -2,14 +2,14 @@
   <div class="popup">
     <div class="popup-inner">
         <slot />
-        <button class="btn" @click="togglePopup()">Close Popup</button>
+        <!-- <button class="btn" @click="togglePopup(), toggleEndGame()">Close Popup</button> -->
     </div>
   </div>
 </template>
 
 <script>
 export default {
-    props: ['togglePopup'],
+    props: ['togglePopup', 'toggleEndGame'],
     
 }
 </script>
